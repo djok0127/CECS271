@@ -35,7 +35,7 @@ while relative_approx_e > user_approx_error
         %caculate the relative approximate error
         relative_approx_e = abs(approx_e / total_area);
 
-        fprintf("n: %d, approx error: %f, relative error: %f \n", n, approx_e, relative_approx_e);
+        fprintf("n: %d, approx error: %f, relative error: %f approx area: %f\n", n, approx_e, relative_approx_e,total_area);
     else % print the first iteration, where the approximate error and relative error is not valid.
         fprintf("n: %d \n", n);
     end
