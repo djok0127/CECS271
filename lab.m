@@ -55,14 +55,32 @@ m = input('Please provide a positive number for lower bound for n: ');
 
 % Starting index for the equation 
 % 'i' will be used instead of n, because n was used in the first exercise.
-i = p - m + 1;
+i = 2;
+
+% f(x) = 1
+
+% x of 1 is equal to 1
+previous_value = 1;
+
+
+printer = p - m + 1;
+
+% if the bound includes 1, print x1
+if printer == 1
+     fprintf('x1: 1.000000 \n');
+end
 
 while i <= p % iterate until the upper limit is met
     
-    % Compute the equation
-    equation = ((1/(1-(1/i^k)))^i);
     
-    fprintf('x%d: %f \n', i, equation);
+    % Compute the equation
+    equation = (1/(1-(1/i^k)))* previous_value;
+    
+    previous_value = equation;
+    % Print the values from the p - m +1 to p
+    if i >= printer
+        fprintf('x%d: %f \n', i, equation);
+    end
     
     % Update the counter
     i = i + 1;
