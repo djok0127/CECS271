@@ -31,7 +31,6 @@ switch method
         dis = secant(a_c, right_end, left_end,  allowed_error);
 end
 
-dis
 
 % define the function poly(a, x)
 function sum = poly(a, x)
