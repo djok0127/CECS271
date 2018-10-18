@@ -2,15 +2,15 @@
 % Dr. Todd Ebert
 % Due: October 15th
 
-method = input ('1 = nddf; 2 = poly_newton; 3 = nddf_polynomial: ');
+method = input ('1 = nddf; 2 = poly_newton; 3 = nddf_polynomial; 4 = draw: ');
 
 switch method
     case 1
         % number 1
         P = input('Please enter the matrix: ');
         i = input('Please enter the i for the nddf: ');
-        ij = input('Please enter the i-j for the nddf: ');
-        fprintf('nddf: %f \n', nddf(i,ij,P));
+        j = input('Please enter the j for the nddf: ');
+        fprintf('nddf: %f \n', nddf(i,j,P));
     case 2
         % number 2
         b = input('Please enter the vector b: ');
@@ -24,34 +24,31 @@ switch method
         fprintf('nddf_polynomial: %f \n', nddf_polynomial(P,z));
     case 4
         % number 4
+        P = input('Please enter the matrix: ');
+        m = input('Please enter m: ');
         
+        draw(P,m)
 end
 
 
 % define the function nddf(i,j,P)
-function slope = nddf(i, ij, P)
-    
-    % if the difference of the two indexes are only one idex appart,
-    % compute the slope
-    if(i-ij == 1)
+function slope = nddf(i, j, P)
 
+    if(j == 0)
         % return slope 0
         % indexing: rows, columns
         % to get rid of indexing error for the matrix, the indexes are
         % added with + 1
-        slope = (P(i+1, 2) - P(ij + 1, 2))/(P(i + 1, 1) - P(ij +1, 1));
+        slope = P(i+1,2);
     else
-        
         % recursive functionality
         % there will not be indexing error until the i-ij == 1 therefore
         % nothing to add to reduce indexing error
-        slope = (nddf(i, ij + 1, P) - nddf(i - 1, ij,P))/((P(i + 1, 1) - P(ij +1, 1)));
-    end 
+        slope = (nddf(i, j - 1, P) - nddf(i - 1, j - 1,P))/((P(i + 1, 1) - P(i+1-j, 1)));
+    end
 end
 
 function sum = poly_newton(b,x,z)
-
-
     total = 0;
     
     % declare l as the length of the array inputted
@@ -69,11 +66,11 @@ function sum = poly_newton(b,x,z)
         else % accrue value and multiply
             % find the multiplication value next to b
             for j = 1:i
-                mult = mult * (z - x(i-1));
+                mult = mult * (z - x(j));
             end
             
             % add b to multiplication
-            total = total + b(i)*x(i-1);
+            total = total + b(i) * mult;
         end
     end
     
@@ -89,22 +86,39 @@ function sum = nddf_polynomial(P, z)
     % preallocate the space for the array b
     b = zeros(1,l_z);
     x = zeros(1,l_z);
-    
-    for i = 1:l_z
+    a = zeros(1,l_z);
+    l_p = length(P);
+    for i = 1:l_p
         
         % get the x values from matrix
         x(i) = P(i,1);
     end 
     
     % compute nddf
-    for i = 1:l_z
-        b(i) = nddf(i,0,P);
+    for i = 1:l_p
+        b(i) = nddf(i-1,i-1,P);
     end
-    
+    for i = 1:l_z
+       a(i) = poly_newton(b,x,z(i));
+    end
     % compute the values
-    sum = poly_newton(b,x,z);
+    sum = a;
 end
 
-function draw(P,m,z)
+function draw(P,m)
     
+    n = length(P);
+    z = zeros(n,2);
+    
+    for i = 1:n
+        % create the x values for the array of z
+        z(i,1) = P(1,1) + i*(P(n,1)-P(1,1))/m;
+    end
+    
+    for i = 1:n
+        z(i,2) = nddf_polynomial(P,z(i,1));
+        fprintf('z_y: %f i: %d \n',  z(i,2),i);
+    end
+    
+    plot(z(:,1),z(:,2));  
 end
