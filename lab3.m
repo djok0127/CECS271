@@ -65,7 +65,7 @@ function sum = poly_newton(b,x,z)
             total = b(i);
         else % accrue value and multiply
             % find the multiplication value next to b
-            for j = 1:i
+            for j = 1:i-1
                 mult = mult * (z - x(j));
             end
             
@@ -76,6 +76,26 @@ function sum = poly_newton(b,x,z)
     
     % return the total sum
     sum = total;
+end
+function new_P = newton_Divided (m, z)
+    p_n = [];
+    
+    coeff = [];
+    for i = 1: size(m,1)
+        coeff(end+1) = ndff(m,1,i);
+    end
+    
+    x = [];
+    for j = 1 : size(m,1)
+        x(end+1) = m(j,1);
+    end
+    
+    for k = 1 : length(z)
+        p_n(end+1) = poly_newton(coeff,x,z(k));
+    end
+    
+    new_P = p_n;
+    
 end
 
 function sum = nddf_polynomial(P, z)
@@ -89,7 +109,6 @@ function sum = nddf_polynomial(P, z)
     a = zeros(1,l_z);
     l_p = length(P);
     for i = 1:l_p
-        
         % get the x values from matrix
         x(i) = P(i,1);
     end 
@@ -108,17 +127,22 @@ end
 function draw(P,m)
     
     n = length(P);
-    z = zeros(n,2);
+    z_x = [];
+    z_y = [];
     
     for i = 1:n
         % create the x values for the array of z
-        z(i,1) = P(1,1) + i*(P(n,1)-P(1,1))/m;
+        z_x(i) = P(1,1) + i*(P(n,1)-P(1,1))/m;
     end
     
     for i = 1:n
-        z(i,2) = nddf_polynomial(P,z(i,1));
-        fprintf('z_y: %f i: %d \n',  z(i,2),i);
+        z_y(i) = nddf_polynomial(P,z_x(i));
+        fprintf('z_y: %f i: %d \n',  z_y(i),i);
     end
     
-    plot(z(:,1),z(:,2));  
+    hold on
+    % plots the black dots of z
+    plot(z_x(:),z_y(:), 'ko');
+    plot(P(:,1),P(:,2), 'r');
+    hold off
 end
