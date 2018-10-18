@@ -77,26 +77,6 @@ function sum = poly_newton(b,x,z)
     % return the total sum
     sum = total;
 end
-function new_P = newton_Divided (m, z)
-    p_n = [];
-    
-    coeff = [];
-    for i = 1: size(m,1)
-        coeff(end+1) = ndff(m,1,i);
-    end
-    
-    x = [];
-    for j = 1 : size(m,1)
-        x(end+1) = m(j,1);
-    end
-    
-    for k = 1 : length(z)
-        p_n(end+1) = poly_newton(coeff,x,z(k));
-    end
-    
-    new_P = p_n;
-    
-end
 
 function sum = nddf_polynomial(P, z)
 
