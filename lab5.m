@@ -1,4 +1,4 @@
-fprintf('----------------number 1----------------');
+fprintf('----------------number 1----------------\n');
 
 k = input('Please input K ( K >= 0 ) : ');
 
@@ -12,28 +12,26 @@ if(SoC == 1)
     fprintf('sine: \n');
 else
     fprintf('cosine: \n');
+    % find c0
+    fprintf('simpsons approx 0: %f \n', simpson(0,SoC,n));
 end
 
-% find c0
-fprintf('simpsons approx c0: %f \n', simpson(0,SoC,n));
+
 
 % finding c1 to cn d1 to dn
 for i=1:k
-    fprintf('simpsons approx %d %f \n',i,simpson(i,SoC,n));
+    fprintf('simpsons approx %d: %f \n',i,simpson(i,SoC,n));
 end
 
-fprintf('----------------number 2----------------');
+fprintf('----------------number 2----------------\n');
 
 % get input n from the user
+% nth order trigonometric polynomial
 n = input('Please input n > 0: ');
 
-% get input m
-m = input('Please input m > 0: ');
+fprintf('sse: %f \n', simpsons2(n));
 
-
-
-
-
+%----------------------------- number 1 functions -----------------------------
 function approx = simpson(k,SoC,n)
     delta_x = (2 * pi) / n;
     xi = 0;
@@ -76,14 +74,71 @@ function compute = f_x(x,k,SoC)
     if(k ~= 0)
         %find dk    
         if(SoC == 1)
-           temp = x^2 *sin(k*x);
+           temp = f(x) *sin(k*x);
         %find ck
         elseif(SoC == 2)
-           temp = x^2 *cos(k*x);
+           temp = f(x) *cos(k*x);
         end
     else % c0
-        temp = x^2;
+        temp = f(x);
     end % end of computing coefficients
     
     compute = temp;
 end % end of function compute
+
+%----------------------------- number 2 functions -----------------------------
+% change function if necessary
+function compute = f(x)
+    compute = x^2; 
+end %end of f function
+
+function compute = f_pnt(x,n)
+    compute = (f(x)-pnt(n))^2;
+end %end of f_pnt
+
+function compute = pnt(n)
+
+    % get cosine when i = 0;
+    collect = simpson(0,2,n);
+    
+    % get sine and cosine
+    for i = 1:n
+        % get sine
+        collect = collect + simpson(i,1,100) * sin(n * i);
+        % get cosine
+        collect = collect + simpson(i,2,100) * cos(n * i);
+    end %end for
+    
+    compute = collect;
+end % ned of pnt
+
+function compute = simpsons2(n)
+    %1000 segments
+    seg = 1000;
+    
+    delta_x = (2 * pi) / seg;
+    xi = 0;
+    
+    % add the first index at 0
+    sum = f_pnt(xi,n);
+    xi = xi + delta_x;
+    four = 1;
+    
+    % compute until xi reaches 2pi - xi
+    while(xi <= (2 * pi - delta_x))
+        
+        if(four == 1)
+            sum = sum + 4 *f_pnt(xi,n);
+            four = 0;
+        elseif (four == 0)
+            sum = sum + 2 *f_pnt(xi,n);
+            four = 1;
+        end % end of if
+        
+        %fprintf('x_i = %f \n',xi);
+        xi = xi + delta_x;
+    end % end of while loop
+    
+    sum = sum + f_pnt(xi,n);
+    compute = sum * delta_x / 3;
+end % end of simpsons2
