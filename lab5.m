@@ -31,6 +31,37 @@ n = input('Please input n > 0: ');
 
 fprintf('sse: %f \n', simpsons2(n));
 
+fprintf('----------------number 3----------------\n');
+
+% get input n
+n = input('Please input n > 0: ');
+
+% get input m
+m = input('Please input m > 0: ');
+
+delta_x = 2*pi / m;
+xi = 0;
+i = 0;
+while(xi < 2*pi - delta_x)
+    xi = xi + delta_x;
+    i = i + 1;
+    
+    all_x(i) =  xi;
+    approx(i) = pnt(n, xi);
+    ft(i) = f(xi);
+end
+
+linspace(0,2*pi, m);
+dot_graph_x = all_x;
+dot_graph_y = approx;
+scatter(dot_graph_x,dot_graph_y);
+title('number 3');
+hold on
+
+line_graph_x = all_x;
+line_graph_y = ft;
+plot(line_graph_x,line_graph_y);
+
 %----------------------------- number 1 functions -----------------------------
 function approx = simpson(k,SoC,n)
     delta_x = (2 * pi) / n;
@@ -93,10 +124,10 @@ function compute = f(x)
 end %end of f function
 
 function compute = f_pnt(x,n)
-    compute = (f(x)-pnt(n))^2;
+    compute = (f(x)-pnt(n,x))^2;
 end %end of f_pnt
 
-function compute = pnt(n)
+function compute = pnt(n,x)
 
     % get cosine when i = 0;
     collect = simpson(0,2,n);
@@ -104,9 +135,9 @@ function compute = pnt(n)
     % get sine and cosine
     for i = 1:n
         % get sine
-        collect = collect + simpson(i,1,100) * sin(n * i);
+        collect = collect + simpson(i,1,n) * sin(x * i);
         % get cosine
-        collect = collect + simpson(i,2,100) * cos(n * i);
+        collect = collect + simpson(i,2,n) * cos(x * i);
     end %end for
     
     compute = collect;
